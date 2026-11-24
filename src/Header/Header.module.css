@@ -1,0 +1,340 @@
+/* =========================================
+   HEADER WRAPPER (FIXED POSITION & GLASSMORPHISM)
+========================================= */
+.headerWrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: rgba(250, 251, 251, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.header {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 30px;
+  height: 70px;
+  position: relative;
+}
+
+/* =========================================
+   LOGO
+========================================= */
+.logoLink {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  z-index: 1001;
+}
+
+.Logo {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.logoLink:hover .Logo {
+  transform: scale(1.05);
+}
+
+/* =========================================
+   NAV MENU (DESKTOP)
+========================================= */
+.menu {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.link,
+.active {
+  position: relative;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.25s ease;
+  letter-spacing: 0.3px;
+}
+
+/* Inactive Link */
+.link {
+  color: #333333;
+}
+
+.link:hover {
+  color: #e50c7a;
+  background: rgba(229, 12, 122, 0.05);
+}
+
+/* Active Link */
+.active {
+  color: #e50c7a;
+  font-weight: 600;
+  background: rgba(229, 12, 122, 0.08);
+}
+
+/* Active Bottom Accent Bar */
+.active::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 16px;
+  right: 16px;
+  height: 2px;
+  background: #e50c7a;
+  border-radius: 2px;
+  box-shadow: 0 0 8px #e50c7a;
+}
+
+/* =========================================
+   AUTH BUTTONS
+========================================= */
+.loginContainer,
+.desktopAuthContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.signupBtn,
+.loginBtn {
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+  text-align: center;
+  text-decoration: none;
+}
+
+.signupBtn {
+  background: transparent;
+  color: #333333;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.signupBtn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.4);
+}
+
+.loginBtn {
+  background: linear-gradient(135deg, #e50c7a 0%, #be123c 100%);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 4px 15px rgba(229, 12, 122, 0.35);
+}
+
+.loginBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(229, 12, 122, 0.5);
+  background: linear-gradient(135deg, #f43f5e 0%, #e50c7a 100%);
+}
+
+.userProfileGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logoutBtn {
+  background-color: #ef4444;
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.logoutBtn:hover {
+  background-color: #dc2626;
+}
+
+.refreshBtn {
+  background-color: #2563eb;
+  color: #ffffff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.refreshBtn:hover {
+  background-color: #1d4ed8;
+}
+
+/* Hide Mobile Auth Container on Desktop */
+.mobileAuthContainer {
+  display: none;
+}
+
+/* =========================================
+   HAMBURGER BUTTON & RESPONSIVE DESIGN
+========================================= */
+.hamburgerBtn {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1001;
+}
+
+.bar {
+  width: 100%;
+  height: 3px;
+  background-color: #0f172a;
+  border-radius: 2px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Hamburger to Cross (X) Animation */
+.openBar1 {
+  transform: translateY(8.5px) rotate(45deg);
+  background-color: #e50c7a;
+}
+
+.openBar2 {
+  opacity: 0;
+}
+
+.openBar3 {
+  transform: translateY(-8.5px) rotate(-45deg);
+  background-color: #e50c7a;
+}
+
+@media (max-width: 900px) {
+  .header {
+    padding: 10px 20px;
+  }
+
+  .hamburgerBtn {
+    display: flex;
+  }
+
+  .desktopAuthContainer {
+    display: none;
+  }
+
+  .menu {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    background: #0f172a; /* Solid dark background */
+    backdrop-filter: blur(16px);
+    flex-direction: column;
+    align-items: stretch;
+    padding: 20px 24px;
+    gap: 8px;
+    box-sizing: border-box;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+
+    /* Hide Animation */
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .menuOpen {
+    max-height: 600px;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Mobile Links Visibility Fix */
+  .link {
+    color: #f8fafc !important;
+    width: 100%;
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    border-radius: 8px;
+  }
+
+  .link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #e50c7a !important;
+  }
+
+  .active {
+    color: #ffffff !important;
+    background: #e50c7a !important;
+    width: 100%;
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    border-radius: 8px;
+  }
+
+  .active::after {
+    display: none;
+  }
+
+  .mobileAuthContainer {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .authGroupMobile {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .mobileAuthContainer .signupBtn {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .signupBtn,
+  .loginBtn {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .userProfileGroup {
+    justify-content: space-between;
+    width: 100%;
+    color: #ffffff;
+  }
+
+  .mobileAuthContainer .refreshBtn {
+    width: 100%;
+  }
+}

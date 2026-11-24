@@ -1,0 +1,187 @@
+.pageLayout {
+  max-width: 850px;
+  margin: 20px auto;
+  padding: 0 15px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.compactCard {
+  background: #ffffff;
+  padding: 18px 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.profileRow {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.smallAvatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #0284c7;
+}
+
+.profileMeta {
+  flex: 1;
+  min-width: 0;
+}
+
+.profileMeta h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #0f172a;
+}
+
+.badge {
+  display: inline-block;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin: 4px 0 8px 0;
+}
+
+.metaInfo {
+  display: flex;
+  gap: 15px;
+  font-size: 0.85rem;
+  color: #475569;
+  flex-wrap: wrap;
+}
+
+.compactEditBtn {
+  padding: 6px 16px;
+  background: transparent;
+  border: 1px solid #0284c7;
+  color: #0284c7;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.compactEditBtn:hover {
+  background: #0284c7;
+  color: #fff;
+}
+
+.photoSection {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.editAvatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #0284c7;
+  background: #e2e8f0;
+}
+
+.photoActions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+}
+
+.photoActions small {
+  color: #64748b;
+}
+
+.photoActions button,
+.photoUploadBtn {
+  display: inline-block;
+  padding: 7px 12px;
+  border: 1px solid #0284c7;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #0284c7;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.photoUploadBtn input {
+  display: none;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.form {
+  color: #000000;
+}
+
+.form h3,
+.errorMessage,
+.formGrid input,
+.formGrid textarea {
+  color: #000000;
+}
+
+.formGrid input::placeholder,
+.formGrid textarea::placeholder {
+  color: #000000;
+  opacity: 1;
+}
+
+.errorMessage {
+  margin: 8px 0;
+  font-weight: 600;
+  color: #000000;
+}
+
+.formActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.formActions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #0284c7;
+  color: white;
+}
+
+.loader {
+  text-align: center;
+  padding: 40px;
+}
+
+@media (max-width: 600px) {
+  .compactCard {
+    padding: 16px;
+  }
+
+  .profileRow {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .metaInfo span {
+    overflow-wrap: anywhere;
+  }
+
+  .compactEditBtn {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}

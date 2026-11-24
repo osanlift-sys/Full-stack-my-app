@@ -1,0 +1,851 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  EMPLOYEE
+  CLIENT
+  SELLER
+}
+
+enum AccountStatus {
+  PENDING
+  ACTIVE
+  REJECTED
+  SUSPENDED
+}
+
+enum RecordStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum EmployeeApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LEAVE
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum BillStatus {
+  DRAFT
+  ISSUED
+  PARTIALLY_PAID
+  PAID
+  VOID
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PARTIALLY_PAID
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum SupportStatus {
+  OPEN
+  IN_REVIEW
+  QUOTED
+  COMPLETE
+  REJECTED
+}
+
+enum QuotationStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+enum IncomeType {
+  INSTALLATION
+  CONVEYANCE
+  ALLOWANCE
+  OTHER
+}
+
+enum ImportStatus {
+  PENDING
+  IMPORTED
+  SKIPPED
+  FAILED
+}
+
+model User {
+  id                      String                   @id @default(cuid())
+  legacyId                String?                  @unique
+  email                   String                   @unique
+  name                    String
+  passwordHash            String?
+  googleSubject           String?                  @unique
+  role                    UserRole
+  status                  AccountStatus            @default(PENDING)
+  photoUrl                String?
+  requestedCompanyName    String?
+  emailVerifiedAt         DateTime?                @db.Timestamptz(6)
+  lastLoginAt             DateTime?                @db.Timestamptz(6)
+  createdAt               DateTime                 @default(now()) @db.Timestamptz(6)
+  updatedAt               DateTime                 @updatedAt @db.Timestamptz(6)
+  employee                EmployeeProfile?
+  seller                  SellerProfile?
+  clientMemberships       ClientMembership[]
+  permissions             UserPermission[]
+  refreshTokens           RefreshToken[]
+  passwordResetTokens     PasswordResetToken[]
+  emailVerificationTokens EmailVerificationToken[]
+  notifications           Notification[]
+  paymentsRecorded        Payment[]                @relation("PaymentRecorder")
+  attendanceReviews       AttendanceRequest[]      @relation("AttendanceReviewer")
+  createdOffers           Offer[]                  @relation("OfferCreator")
+  createdBills            Bill[]                   @relation("BillCreator")
+  createdOrders           Order[]                  @relation("OrderCustomer")
+  supportRequests         SupportRequest[]         @relation("SupportRequester")
+  reviewedSupport         SupportRequest[]         @relation("SupportReviewer")
+  createdQuotations       Quotation[]              @relation("QuotationCreator")
+  auditEvents             AuditLog[]               @relation("AuditActor")
+  incomeRecords           IncomeRecord[]
+  serviceChecklists       ServiceChecklist[]
+  aiUsage                 AIUsage[]
+
+  @@index([role, status])
+  @@index([createdAt])
+}
+
+model RefreshToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime  @db.Timestamptz(6)
+  revokedAt DateTime? @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime  @db.Timestamptz(6)
+  usedAt    DateTime? @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}
+
+model EmailVerificationToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime  @db.Timestamptz(6)
+  usedAt    DateTime? @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}
+
+model EmployeeProfile {
+  id                 String                 @id @default(cuid())
+  legacyId           String?                @unique
+  userId             String                 @unique
+  designation        String?
+  phone              String?
+  address            String?
+  baseSalary         Decimal                @default(0) @db.Decimal(18, 2)
+  advanceDeduction   Decimal                @default(0) @db.Decimal(18, 2)
+  approvalStatus     EmployeeApprovalStatus @default(PENDING)
+  approvedAt         DateTime?              @db.Timestamptz(6)
+  createdAt          DateTime               @default(now()) @db.Timestamptz(6)
+  updatedAt          DateTime               @updatedAt @db.Timestamptz(6)
+  user               User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attendance         AttendanceRecord[]
+  attendanceRequests AttendanceRequest[]
+  payroll            MonthlyPayroll[]
+  projectAssignments ProjectEmployee[]
+
+  @@index([approvalStatus])
+}
+
+model UserPermission {
+  id        String   @id @default(cuid())
+  userId    String
+  key       String
+  enabled   Boolean  @default(false)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, key])
+  @@index([key, enabled])
+}
+
+model Company {
+  id              String                    @id @default(cuid())
+  legacyId        String?                   @unique
+  name            String
+  normalizedName  String                    @unique
+  address         String?
+  phone           String?
+  email           String?
+  status          RecordStatus              @default(ACTIVE)
+  createdAt       DateTime                  @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime                  @updatedAt @db.Timestamptz(6)
+  clientProfile   ClientOrganization?
+  clientContacts  ClientAuthorizedContact[]
+  memberships     ClientMembership[]
+  offers          Offer[]
+  bills           Bill[]
+  orders          Order[]
+  projects        Project[]
+  supportRequests SupportRequest[]
+
+  @@index([name])
+}
+
+model ClientOrganization {
+  id        String   @id @default(cuid())
+  legacyId  String?  @unique
+  companyId String   @unique
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+model ClientAuthorizedContact {
+  id              String       @id @default(cuid())
+  companyId       String
+  email           String
+  normalizedEmail String       @unique
+  name            String?
+  status          RecordStatus @default(ACTIVE)
+  createdAt       DateTime     @default(now()) @db.Timestamptz(6)
+  company         Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, status])
+}
+
+model ClientMembership {
+  id        String   @id @default(cuid())
+  userId    String
+  companyId String
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, companyId])
+  @@index([companyId])
+}
+
+model SellerProfile {
+  id             String       @id @default(cuid())
+  legacyId       String?      @unique
+  userId         String       @unique
+  commissionRate Decimal      @default(0) @db.Decimal(7, 4)
+  status         RecordStatus @default(ACTIVE)
+  createdAt      DateTime     @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime     @updatedAt @db.Timestamptz(6)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products       Product[]
+  sales          SellerSale[]
+
+  @@index([status])
+}
+
+model ProductCategory {
+  id        String    @id @default(cuid())
+  legacyId  String?   @unique
+  name      String    @unique
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  products  Product[]
+}
+
+model Product {
+  id             String              @id @default(cuid())
+  legacyId       String?             @unique
+  sku            String?             @unique
+  name           String
+  description    String?
+  categoryId     String?
+  sellerId       String?
+  unit           String?
+  unitPrice      Decimal             @default(0) @db.Decimal(18, 2)
+  sellingPrice   Decimal             @default(0) @db.Decimal(18, 2)
+  stockQuantity  Decimal             @default(0) @db.Decimal(18, 3)
+  isPublic       Boolean             @default(false)
+  status         RecordStatus        @default(ACTIVE)
+  createdAt      DateTime            @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime            @updatedAt @db.Timestamptz(6)
+  category       ProductCategory?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  seller         SellerProfile?      @relation(fields: [sellerId], references: [id], onDelete: SetNull)
+  images         ProductImage[]
+  purchaseItems  PurchaseItem[]
+  offerItems     OfferItem[]
+  billItems      BillItem[]
+  orderItems     OrderItem[]
+  stockMovements InventoryMovement[]
+  sellerSales    SellerSale[]
+
+  @@index([categoryId, status])
+  @@index([sellerId, status])
+  @@index([isPublic, status])
+  @@index([name])
+}
+
+model SystemCounter {
+  key       String   @id
+  value     Int      @default(0)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+}
+
+model ProductImage {
+  id        String   @id @default(cuid())
+  productId String
+  url       String
+  mimeType  String?
+  sizeBytes Int?
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+}
+
+model Purchase {
+  id          String              @id @default(cuid())
+  legacyId    String?             @unique
+  purchasedAt DateTime            @db.Timestamptz(6)
+  totalAmount Decimal             @db.Decimal(18, 2)
+  createdAt   DateTime            @default(now()) @db.Timestamptz(6)
+  items       PurchaseItem[]
+  movements   InventoryMovement[]
+
+  @@index([purchasedAt])
+}
+
+model PurchaseItem {
+  id          String   @id @default(cuid())
+  purchaseId  String
+  productId   String?
+  productName String
+  quantity    Decimal  @db.Decimal(18, 3)
+  unitPrice   Decimal  @db.Decimal(18, 2)
+  totalPrice  Decimal  @db.Decimal(18, 2)
+  purchase    Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  product     Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([productId])
+}
+
+model InventoryMovement {
+  id          String     @id @default(cuid())
+  productId   String
+  purchaseId  String?
+  orderItemId String?
+  quantity    Decimal    @db.Decimal(18, 3)
+  reason      String
+  createdAt   DateTime   @default(now()) @db.Timestamptz(6)
+  product     Product    @relation(fields: [productId], references: [id], onDelete: Restrict)
+  purchase    Purchase?  @relation(fields: [purchaseId], references: [id], onDelete: SetNull)
+  orderItem   OrderItem? @relation(fields: [orderItemId], references: [id], onDelete: SetNull)
+
+  @@index([productId, createdAt])
+}
+
+model Offer {
+  id          String      @id @default(cuid())
+  legacyId    String?     @unique
+  companyId   String
+  createdById String?
+  offerNo     String?
+  subject     String?
+  offerDate   DateTime?   @db.Timestamptz(6)
+  subtotal        Decimal     @default(0) @db.Decimal(18, 2)
+  discountAmount  Decimal     @default(0) @db.Decimal(18, 2)
+  totalAmount     Decimal     @default(0) @db.Decimal(18, 2)
+  headerData      Json        @default("{}") @db.JsonB
+  legacyData      Json        @default("{}") @db.JsonB
+  createdAt       DateTime    @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime    @updatedAt @db.Timestamptz(6)
+  company         Company     @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  createdBy       User?       @relation("OfferCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  items           OfferItem[]
+
+  @@index([companyId, offerDate])
+  @@index([offerNo])
+}
+
+model OfferItem {
+  id          String   @id @default(cuid())
+  offerId     String
+  position    Int      @default(0)
+  productId   String?
+  description String
+  quantity    Decimal  @db.Decimal(18, 3)
+  unitPrice   Decimal  @db.Decimal(18, 2)
+  total       Decimal  @db.Decimal(18, 2)
+  unit        String?
+  legacyData  Json     @default("{}") @db.JsonB
+  offer       Offer    @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  product     Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([productId])
+}
+
+model Bill {
+  id              String        @id @default(cuid())
+  legacyId        String?       @unique
+  companyId       String
+  createdById     String?
+  billNo          String?
+  subject         String?
+  createdType     String?
+  status          BillStatus    @default(ISSUED)
+  paymentStatus   PaymentStatus @default(PENDING)
+  billDate        DateTime?     @db.Timestamptz(6)
+  dueDate         DateTime?     @db.Timestamptz(6)
+  subtotal        Decimal       @default(0) @db.Decimal(18, 2)
+  discountAmount  Decimal       @default(0) @db.Decimal(18, 2)
+  totalAmount     Decimal       @default(0) @db.Decimal(18, 2)
+  paidAmount      Decimal       @default(0) @db.Decimal(18, 2)
+  dueAmount       Decimal       @default(0) @db.Decimal(18, 2)
+  purchaseOrderNo String?
+  isBlankCreated  Boolean       @default(false)
+  showPaidAmount  Boolean       @default(true)
+  showDueAmount   Boolean       @default(true)
+  showPaymentMode Boolean       @default(true)
+  headerData      Json          @default("{}") @db.JsonB
+  notes           Json          @default("[]") @db.JsonB
+  paymentMode     Json          @default("[]") @db.JsonB
+  legacyData      Json          @default("{}") @db.JsonB
+  createdAt       DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime      @updatedAt @db.Timestamptz(6)
+  company         Company       @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  createdBy       User?         @relation("BillCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  items           BillItem[]
+  payments        Payment[]
+
+  @@unique([companyId, billNo])
+  @@index([companyId, billDate])
+  @@index([status, paymentStatus])
+  @@index([billNo])
+}
+
+model BillItem {
+  id          String   @id @default(cuid())
+  billId      String
+  productId   String?
+  position    Int      @default(0)
+  description String
+  quantity    Decimal  @db.Decimal(18, 3)
+  unitPrice   Decimal  @db.Decimal(18, 2)
+  total       Decimal  @db.Decimal(18, 2)
+  bill        Bill     @relation(fields: [billId], references: [id], onDelete: Cascade)
+  product     Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([productId])
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  legacyId      String?       @unique
+  billId        String?
+  orderId       String?
+  amount        Decimal       @db.Decimal(18, 2)
+  currency      String        @default("BDT")
+  status        PaymentStatus @default(PENDING)
+  paymentMethod String?
+  reference     String?
+  recordedById  String?
+  paidAt        DateTime?     @db.Timestamptz(6)
+  createdAt     DateTime      @default(now()) @db.Timestamptz(6)
+  bill          Bill?         @relation(fields: [billId], references: [id], onDelete: Restrict)
+  order         Order?        @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  recordedBy    User?         @relation("PaymentRecorder", fields: [recordedById], references: [id], onDelete: SetNull)
+
+  @@index([billId, paidAt])
+  @@index([orderId, paidAt])
+  @@index([status, createdAt])
+}
+
+model Challan {
+  id          String        @id @default(cuid())
+  legacyId    String?       @unique
+  challanNo   String?
+  companyName String?
+  address     String?
+  subject     String?
+  challanDate DateTime?     @db.Timestamptz(6)
+  legacyData  Json          @default("{}") @db.JsonB
+  createdAt   DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime      @updatedAt @db.Timestamptz(6)
+  items       ChallanItem[]
+
+  @@index([challanDate])
+  @@index([challanNo])
+}
+
+model ChallanItem {
+  id          String  @id @default(cuid())
+  challanId   String
+  description String
+  quantity    Decimal @db.Decimal(18, 3)
+  unit        String?
+  challan     Challan @relation(fields: [challanId], references: [id], onDelete: Cascade)
+}
+
+model Order {
+  id            String        @id @default(cuid())
+  legacyId      String?       @unique
+  customerId    String?
+  companyId     String?
+  status        OrderStatus   @default(PENDING)
+  paymentStatus PaymentStatus @default(PENDING)
+  subtotal      Decimal       @default(0) @db.Decimal(18, 2)
+  totalAmount   Decimal       @default(0) @db.Decimal(18, 2)
+  createdAt     DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime      @updatedAt @db.Timestamptz(6)
+  customer      User?         @relation("OrderCustomer", fields: [customerId], references: [id], onDelete: SetNull)
+  company       Company?      @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  items         OrderItem[]
+  payments      Payment[]
+
+  @@index([customerId, createdAt])
+  @@index([companyId, createdAt])
+  @@index([status, paymentStatus])
+}
+
+model OrderItem {
+  id                 String              @id @default(cuid())
+  orderId            String
+  productId          String?
+  description        String
+  quantity           Decimal             @db.Decimal(18, 3)
+  unitPrice          Decimal             @db.Decimal(18, 2)
+  total              Decimal             @db.Decimal(18, 2)
+  order              Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product            Product?            @relation(fields: [productId], references: [id], onDelete: SetNull)
+  inventoryMovements InventoryMovement[]
+  sellerSale         SellerSale?
+
+  @@index([productId])
+}
+
+model SellerSale {
+  id               String        @id @default(cuid())
+  legacyId         String?       @unique
+  sellerId         String
+  productId        String
+  orderItemId      String?       @unique
+  quantity         Decimal       @db.Decimal(18, 3)
+  grossAmount      Decimal       @db.Decimal(18, 2)
+  commissionAmount Decimal       @db.Decimal(18, 2)
+  soldAt           DateTime      @default(now()) @db.Timestamptz(6)
+  seller           SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Restrict)
+  product          Product       @relation(fields: [productId], references: [id], onDelete: Restrict)
+  orderItem        OrderItem?    @relation(fields: [orderItemId], references: [id], onDelete: SetNull)
+
+  @@index([sellerId, soldAt])
+  @@index([productId, soldAt])
+}
+
+model Project {
+  id                  String                 @id @default(cuid())
+  legacyId            String?                @unique
+  companyId           String?
+  projectName         String
+  status              String?
+  liftQuantity        Int?
+  servicingDate       DateTime?              @db.Timestamptz(6)
+  legacyData          Json                   @default("{}") @db.JsonB
+  createdAt           DateTime               @default(now()) @db.Timestamptz(6)
+  updatedAt           DateTime               @updatedAt @db.Timestamptz(6)
+  company             Company?               @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  billList            ProjectServiceRecord[]
+  employeeAssignments ProjectEmployee[]
+  checklists          ServiceChecklist[]
+
+  @@index([companyId, status])
+}
+
+model ProjectServiceRecord {
+  id               String    @id @default(cuid())
+  legacyId         String?   @unique
+  projectId        String
+  month            String?
+  servicingDate    DateTime? @db.Timestamptz(6)
+  servicingStatus  String?
+  advanceDeduction Decimal?  @db.Decimal(18, 2)
+  legacyData       Json      @default("{}") @db.JsonB
+  project          Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, servicingDate])
+}
+
+model ProjectEmployee {
+  projectId  String
+  employeeId String
+  assignedAt DateTime        @default(now()) @db.Timestamptz(6)
+  project    Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  employee   EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, employeeId])
+}
+
+model AttendanceRecord {
+  id               String           @id @default(cuid())
+  legacyId         String?          @unique
+  employeeId       String
+  date             DateTime         @db.Date
+  status           AttendanceStatus @default(PRESENT)
+  statusIn         String?
+  statusOut        String?
+  advanceDeduction Decimal          @default(0) @db.Decimal(18, 2)
+  notes            String?
+  legacyData       Json             @default("{}") @db.JsonB
+  createdAt        DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime         @updatedAt @db.Timestamptz(6)
+  employee         EmployeeProfile  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, date])
+  @@index([date, status])
+}
+
+model AttendanceRequest {
+  id            String          @id @default(cuid())
+  legacyId      String?         @unique
+  employeeId    String
+  requestedDate DateTime        @db.Date
+  requestData   Json            @default("{}") @db.JsonB
+  status        ReviewStatus    @default(PENDING)
+  reviewedById  String?
+  reviewedAt    DateTime?       @db.Timestamptz(6)
+  createdAt     DateTime        @default(now()) @db.Timestamptz(6)
+  employee      EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  reviewedBy    User?           @relation("AttendanceReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([employeeId, requestedDate])
+}
+
+model MonthlyPayroll {
+  id               String          @id @default(cuid())
+  employeeId       String
+  month            String
+  baseSalary       Decimal         @db.Decimal(18, 2)
+  presentDays      Decimal         @default(0) @db.Decimal(8, 2)
+  leaveDays        Decimal         @default(0) @db.Decimal(8, 2)
+  absentDays       Decimal         @default(0) @db.Decimal(8, 2)
+  fridayAllowance  Decimal         @default(0) @db.Decimal(18, 2)
+  advanceDeduction Decimal         @default(0) @db.Decimal(18, 2)
+  netPayable       Decimal         @default(0) @db.Decimal(18, 2)
+  calculatedAt     DateTime        @default(now()) @db.Timestamptz(6)
+  employee         EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, month])
+  @@index([month])
+}
+
+model SupportRequest {
+  id                    String              @id @default(cuid())
+  legacyId              String?             @unique
+  requestedById         String?
+  reviewedById          String?
+  companyId             String?
+  serviceId             String?
+  serviceTitle          String
+  serviceTag            String?
+  userName              String
+  email                 String?
+  whatsapp              String?
+  problemDetails        String
+  status                SupportStatus       @default(OPEN)
+  hasUnreadNotification Boolean             @default(true)
+  createdAt             DateTime            @default(now()) @db.Timestamptz(6)
+  updatedAt             DateTime            @updatedAt @db.Timestamptz(6)
+  requestedBy           User?               @relation("SupportRequester", fields: [requestedById], references: [id], onDelete: SetNull)
+  reviewedBy            User?               @relation("SupportReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  company               Company?            @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  attachments           SupportAttachment[]
+  quotations            Quotation[]
+
+  @@index([status, createdAt])
+  @@index([requestedById, createdAt])
+  @@index([companyId, createdAt])
+}
+
+model SupportAttachment {
+  id           String         @id @default(cuid())
+  requestId    String
+  storageKey   String         @unique
+  originalName String
+  mimeType     String
+  sizeBytes    Int
+  createdAt    DateTime       @default(now()) @db.Timestamptz(6)
+  request      SupportRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+}
+
+model Quotation {
+  id          String          @id @default(cuid())
+  legacyId    String?         @unique
+  requestId   String
+  createdById String?
+  status      QuotationStatus @default(DRAFT)
+  suggestion  String?
+  subtotal    Decimal         @default(0) @db.Decimal(18, 2)
+  grandTotal  Decimal         @default(0) @db.Decimal(18, 2)
+  validUntil  DateTime?       @db.Timestamptz(6)
+  createdAt   DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime        @updatedAt @db.Timestamptz(6)
+  request     SupportRequest  @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  createdBy   User?           @relation("QuotationCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  items       QuotationItem[]
+
+  @@index([requestId, status])
+  @@index([createdById, createdAt])
+}
+
+model QuotationItem {
+  id          String    @id @default(cuid())
+  quotationId String
+  position    Int       @default(0)
+  description String
+  quantity    Decimal   @db.Decimal(18, 3)
+  unitPrice   Decimal   @db.Decimal(18, 2)
+  total       Decimal   @db.Decimal(18, 2)
+  quotation   Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  legacyId  String?   @unique
+  userId    String?
+  title     String?
+  message   String?
+  readAt    DateTime? @db.Timestamptz(6)
+  payload   Json      @default("{}") @db.JsonB
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt, createdAt])
+}
+
+model FinancialTransaction {
+  id            String   @id @default(cuid())
+  legacyId      String?  @unique
+  type          String
+  referenceType String?
+  referenceId   String?
+  amount        Decimal  @db.Decimal(18, 2)
+  currency      String   @default("BDT")
+  occurredAt    DateTime @db.Timestamptz(6)
+  description   String?
+  legacyData    Json     @default("{}") @db.JsonB
+  createdAt     DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([type, occurredAt])
+  @@index([referenceType, referenceId])
+}
+
+model IncomeRecord {
+  id          String     @id @default(cuid())
+  legacyId    String?    @unique
+  createdById String?
+  type        IncomeType
+  category    String?
+  amount      Decimal    @default(0) @db.Decimal(18, 2)
+  occurredAt  DateTime?  @db.Timestamptz(6)
+  details     Json       @default("{}") @db.JsonB
+  createdAt   DateTime   @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime   @updatedAt @db.Timestamptz(6)
+  createdBy   User?      @relation(fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@index([type, occurredAt])
+}
+
+model ServiceChecklist {
+  id              String   @id @default(cuid())
+  legacyId        String?  @unique
+  projectId       String
+  userId          String
+  status          String
+  workDescription String?
+  checklistData   Json     @db.JsonB
+  createdAt       DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @db.Timestamptz(6)
+  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user            User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([projectId, createdAt])
+  @@index([userId, createdAt])
+}
+
+model AIUsage {
+  userId    String
+  usageDate DateTime @db.Date
+  count     Int      @default(0)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, usageDate])
+}
+
+model AuditLog {
+  id           String   @id @default(cuid())
+  actorId      String?
+  actorEmail   String?
+  action       String
+  resourceType String
+  resourceId   String?
+  metadata     Json     @default("{}") @db.JsonB
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+  actor        User?    @relation("AuditActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([actorId, createdAt])
+  @@index([resourceType, resourceId, createdAt])
+}
+
+model LegacyDocument {
+  id               String       @id @default(cuid())
+  sourcePath       String       @unique
+  sourceCollection String
+  sourceId         String
+  sourceCreatedAt  DateTime?    @db.Timestamptz(6)
+  rawData          Json         @db.JsonB
+  status           ImportStatus @default(PENDING)
+  error            String?
+  importedAt       DateTime?    @db.Timestamptz(6)
+  createdAt        DateTime     @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime     @updatedAt @db.Timestamptz(6)
+
+  @@index([sourceCollection, status])
+  @@index([status, updatedAt])
+}

@@ -1,0 +1,352 @@
+/* ==========================================
+   ১. Dropdown Filter Section (Modern Card)
+   ========================================== */
+.challan-search-card {
+  margin: 15px auto 25px auto;
+  padding: 20px 25px;
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  max-width: 210mm;
+  box-sizing: border-box;
+}
+
+.dropdown-filter-group {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.select-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 250px;
+}
+
+.select-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.select-dropdown {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+  background-color: #ffffff;
+  cursor: pointer;
+  color: #0f172a;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.select-dropdown:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.select-dropdown:disabled {
+  background-color: #f1f5f9;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.download-box {
+  margin-top: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.btn-download-challan {
+  padding: 10px 20px;
+  background-color: #16a34a;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.2);
+  transition: background-color 0.2s;
+}
+
+.btn-download-challan:hover {
+  background-color: #15803d;
+}
+
+.signature-toggle {
+  background-color: #475569;
+}
+
+.signature-toggle:hover {
+  background-color: #334155;
+}
+
+.signature-toggle.signature-enabled {
+  background-color: #198754;
+}
+
+.signature-toggle.signature-enabled:hover {
+  background-color: #157347;
+}
+
+/* ==========================================
+   ২. Challan Pad & A4 PDF Alignment Fix
+   ========================================== */
+.invoice-container {
+  width: 210mm;
+  min-height: 296mm;
+  padding: 5px 12mm 0;
+  margin: 0 auto 30px auto;
+  background: #ffffff;
+  box-sizing: border-box;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #1e293b;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Watermark CSS */
+.invoice-container::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 320px;
+  height: 320px;
+  background-image: url("../../assets/main-logo.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 0.06;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.challan-content-wrap,
+.footer-section-wrap {
+  position: relative;
+  z-index: 1;
+}
+
+.challan-content-wrap {
+  width: 100%;
+}
+
+/* Footer Section - Fixed at Bottom */
+.footer-section-wrap {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 10px;
+}
+
+.invoice-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+
+.invoice-container .seal-circle {
+  position: relative;
+  width: 113px;
+  height: 113px;
+  flex: 0 0 113px;
+  border: 0;
+}
+
+.seal-circle img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.invoice-container .seal-circle .seal-signature {
+  position: absolute;
+  top: 52%;
+  left: 88%;
+  width: 126%;
+  max-height: 44%;
+  height: auto;
+  object-fit: contain;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.signature-title {
+  border-top: 1.5px solid #000000;
+  width: 220px;
+  text-align: center;
+  padding-top: 6px;
+  font-size: 13px;
+  color: #000;
+}
+
+.bottom-contact {
+  text-align: center;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 10px;
+  font-size: 11px;
+  color: #475569;
+}
+
+.bottom-contact p {
+  margin: 2px 0;
+}
+
+/* ==========================================
+   ৩. Editable Table Styles
+   ========================================== */
+.invoice-container .challan-table-wrapper {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  table-layout: fixed;
+}
+
+.invoice-container .challan-table-wrapper th,
+.invoice-container .challan-table-wrapper td {
+  border: 1px solid #cbd5e1;
+  padding: 5px 7px;
+  font-size: 11.5px;
+  line-height: 1.35;
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+}
+
+.invoice-container .challan-table-wrapper th {
+  background-color: #f1f5f9;
+  color: #0f172a;
+  font-weight: 700;
+  text-align: center;
+}
+
+.invoice-container .challan-table-wrapper thead {
+  display: table-header-group;
+}
+
+.invoice-container .challan-table-wrapper tr {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.invoice-container .table-input {
+  width: 100%;
+  border: 1px solid #cbd5e0;
+  border-radius: 4px;
+  padding: 3px 5px;
+  font-family: inherit;
+  font-size: 11.5px;
+  line-height: 1.35;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.invoice-container .table-input:focus {
+  border-color: #2563eb;
+  background-color: #f8fafc;
+}
+
+.btn-delete-item {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #dc2626;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.btn-delete-item:hover {
+  background-color: #fecaca;
+}
+
+.no-data-placeholder {
+  text-align: center;
+  padding: 50px 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 2px dashed #cbd5e1;
+  color: #64748b;
+  max-width: 210mm;
+  margin: 20px auto;
+}
+
+/* ==========================================
+   ৪. PDF Mode Overrides
+   ========================================== */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+.pdf-mode {
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 auto !important;
+  padding: 0mm 3mm 0mm 3mm !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+}
+
+.pdf-mode::before {
+  display: none !important;
+  content: none !important;
+}
+
+/* Hide elements in PDF mode to prevent duplicate rendering */
+.pdf-mode .no-print,
+.pdf-mode :global(.no-print-in-pdf),
+.pdf-mode :global(.company-header),
+.pdf-mode .bottom-contact img {
+  display: none !important;
+}
+
+.pdf-mode .footer-section-wrap {
+  margin-top: 15px !important;
+  padding-top: 5px !important;
+  page-break-inside: avoid !important;
+}
+
+.pdf-mode .invoice-footer {
+  margin-bottom: 10px !important;
+  display: flex !important;
+  justify-content: space-between !important;
+}
+
+.pdf-mode * {
+  box-sizing: border-box !important;
+}
+
+.pdf-mode input,
+.pdf-mode textarea {
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 1px 2px 3px 2px !important;
+  margin: 0 !important;
+  line-height: 1.4 !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+}

@@ -1,0 +1,193 @@
+.container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.heading {
+  margin-bottom: 24px;
+  text-align: center;
+  color: #1a1a1a;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.loader,
+.error,
+.empty {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 1.1rem;
+  color: #555;
+}
+
+.error {
+  color: #dc3545;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 12px;
+  border: 3px solid #f1f5f9;
+}
+
+.name {
+  margin: 8px 0 4px 0;
+  font-size: 1.25rem;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.designation {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 500;
+  color: #2563eb;
+  font-size: 0.95rem;
+}
+
+.detailsGroup {
+  font-size: 0.875rem;
+  color: #475569;
+  text-align: left;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 12px;
+  margin-top: 12px;
+}
+
+.detailItem {
+  margin: 6px 0;
+  word-break: break-word;
+}
+
+.detailItem strong {
+  color: #334155;
+}
+
+/* Modal Overlay Background */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+/* Modal Content Box */
+.modalContent {
+  background: #ffffff;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 24px;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Close Button */
+.closeBtn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #666;
+}
+
+.closeBtn:hover {
+  color: #000;
+}
+
+/* Selected User Header Style inside Modal */
+.modalUserHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.modalAvatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.modalUserName {
+  color: #0f172a;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+}
+
+.modalUserEmail {
+  color: #475569;
+  font-size: 0.9rem;
+  margin: 4px 0 0 0;
+}
+
+.badge {
+  background-color: #eef2ff;
+  color: #4f46e5;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  display: inline-block;
+  margin: 4px 0;
+}
+/* Delete Button Style */
+.deleteBtn {
+  margin-top: 15px;
+  width: 100%;
+  padding: 8px 12px;
+  background-color: #ef4444;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.deleteBtn:hover {
+  background-color: #dc2626;
+}

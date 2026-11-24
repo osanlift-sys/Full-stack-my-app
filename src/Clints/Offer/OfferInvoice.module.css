@@ -1,0 +1,621 @@
+/* ==========================================
+   Action Bar & Base Layout
+   ========================================== */
+.mainWrapper {
+  margin-top: 20px;
+}
+
+.actionBar {
+  max-width: 210mm;
+  margin: 0 auto 10px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.actionSelectors,
+.actionButtons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.actionSelectors {
+  width: 100%;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.actionButtons {
+  align-self: flex-end;
+}
+
+.actionField {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.actionField select {
+  min-width: 0;
+  max-width: 100%;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.btnAction {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 12px;
+  background-color: #0d6efd;
+  color: #ffffff;
+}
+
+.btnAction:hover {
+  opacity: 0.9;
+}
+
+.btnAction:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.signatureToggle {
+  background-color: #475569;
+}
+
+.signatureToggle.signatureEnabled {
+  background-color: #198754;
+}
+
+@media (max-width: 640px) {
+  .actionBar {
+    width: calc(100% - 24px);
+  }
+
+  .actionSelectors {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .actionField {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 4px;
+    white-space: normal;
+  }
+
+  .actionField select {
+    width: 100%;
+    min-height: 40px;
+  }
+
+  .actionButtons {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-self: stretch;
+  }
+
+  .actionButtons .btnAction {
+    min-height: 42px;
+    padding: 8px;
+  }
+}
+
+/* Page Container */
+.invoiceContainer {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  background: #ffffff;
+  padding: 5mm 10mm;
+  box-sizing: border-box;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #1e293b;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Keep the on-screen watermark consistent with the invoice pad. */
+.invoiceContainer:not(.pdfMode)::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 320px;
+  height: 320px;
+  background-image: url("../../assets/main-logo.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 0.06;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Watermark Overlay */
+.watermarkBox {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 380px;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.watermarkImg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Pad Header Image */
+.padHeader {
+  width: 100%;
+  margin-bottom: 5px;
+  position: relative;
+  z-index: 1;
+}
+
+.padHeaderImg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.documentType {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 10px 0 8px 0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+}
+
+/* Document Info & Inputs */
+.infoSection {
+  font-size: 12px;
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.infoRow,
+.subjectLine,
+.toAddress {
+  margin-bottom: 4px;
+}
+
+.mainWrapper input {
+  border: 1px solid transparent;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12px;
+  padding: 2px 4px;
+  margin: 0;
+  box-sizing: border-box;
+  line-height: 1.3;
+}
+
+.mainWrapper input:hover,
+.mainWrapper input:focus {
+  border: 1px solid #0d6efd;
+  background-color: #f8f9fa;
+  border-radius: 2px;
+}
+
+.tableInput {
+  width: 100%;
+}
+.inlineInput {
+  display: inline-block;
+}
+.blockInput {
+  display: block;
+  width: 100%;
+}
+.bold {
+  font-weight: bold;
+  color: #000;
+}
+.noMargin {
+  margin: 0;
+}
+
+/* Invoice Table */
+.invoiceTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  table-layout: fixed;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+}
+
+.invoiceTable th,
+.invoiceTable td {
+  border: 1px solid #cbd5e1;
+  padding: 5px 7px;
+  font-size: 11.5px;
+  line-height: 1.35;
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+}
+
+.invoiceTable th {
+  background-color: #f1f5f9;
+  color: #0f172a;
+  text-align: center;
+  font-weight: 700;
+}
+
+.textCenter {
+  text-align: center;
+}
+
+.pdfTableValue {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.cellTotal {
+  white-space: nowrap;
+}
+
+/* Controls & Buttons */
+.addRowContainer {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-start;
+  position: relative;
+  z-index: 1;
+}
+
+.btnAddRow,
+.btnAddNote {
+  background-color: #198754;
+  color: white;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.btnDelete {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 3px 7px;
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inWordsSection {
+  margin-top: 10px;
+  font-size: 12px;
+  border-top: 1px solid #ccc;
+  padding-top: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+.notesSection {
+  margin-top: 10px;
+  font-size: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.noteRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 3px;
+}
+
+.noteLabel {
+  flex-shrink: 0;
+}
+.noteInput {
+  width: 80%;
+}
+.inlineDelete {
+  margin-left: 8px;
+}
+.addNoteBox {
+  margin: 4px 0;
+}
+.paymentMode {
+  margin-top: 6px;
+}
+.paymentLine {
+  margin-bottom: 2px;
+}
+
+/* Footer Section */
+.invoiceFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 25px;
+  padding-top: 10px;
+  padding-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.invoiceContainer:not(.pdfMode) .invoiceFooter {
+  margin-top: auto;
+}
+
+.bottomContact img {
+  display: block;
+}
+
+.sealBox {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.invoiceContainer .sealCircle {
+  width: 113px;
+  height: 113px;
+  flex: 0 0 113px;
+  border: 0;
+  position: relative;
+}
+
+.invoiceContainer .sealCircle img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.invoiceContainer .sealCircle .sealSignature {
+  position: absolute;
+  top: 52%;
+  left: 88%;
+  width: 126%;
+  max-height: 44%;
+  height: auto;
+  object-fit: contain;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.officialSeal {
+  width: 75px;
+  height: 75px;
+  border: 2px solid #5e2785;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 6px;
+  box-shadow: inset 0 0 0 2px #5e2785;
+}
+
+.sealOuter {
+  text-align: center;
+  font-size: 7.5px;
+  font-weight: 900;
+  color: #5e2785;
+  padding: 3px;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.sealTop {
+  display: block;
+  font-size: 8.5px;
+  border-bottom: 1px solid #5e2785;
+  padding-bottom: 1px;
+  margin-bottom: 1px;
+}
+
+.sealMiddle {
+  display: block;
+  font-size: 6px;
+}
+
+.receiverSignBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.signatureLine {
+  border-top: 1.5px dashed #000;
+  width: 150px;
+  margin-bottom: 6px;
+}
+
+.footerSignText {
+  font-size: 11px;
+}
+
+/* Key Services Footer Bar */
+.bottomServicesContainer {
+  margin-top: 10px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.servicesFooterImg {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 3px;
+}
+
+.bottomTagline {
+  font-size: 10.5px;
+  color: #0b1d33;
+  margin-top: 5px;
+  text-align: left;
+}
+
+/* Suggestions Dropdown */
+.suggestionsDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  border: 1px solid #0d6efd;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  max-height: 180px;
+  overflow-y: auto;
+  z-index: 100;
+  padding: 5px 0;
+  text-align: left;
+}
+
+.suggestionCategory {
+  padding: 4px 8px;
+  font-size: 10px;
+  background-color: #e9ecef;
+  color: #333;
+}
+
+.suggestionItem {
+  padding: 6px 12px;
+  font-size: 11px;
+  cursor: pointer;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.suggestionItem:hover {
+  background-color: #0d6efd;
+  color: #ffffff !important;
+}
+
+/* ==========================================
+   PERFECT PDF PRINTING MODE SETTINGS
+   ========================================== */
+
+/* Page Break Control Rules */
+.pageBreakAvoid,
+.inWordsSection,
+.notesSection,
+.invoiceFooter,
+.sealBox,
+.receiverSignBox {
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
+}
+
+.invoiceTable {
+  page-break-inside: auto !important;
+  break-inside: auto !important;
+}
+
+.invoiceTable thead {
+  display: table-header-group !important;
+}
+
+.invoiceTable tr {
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
+  page-break-after: auto !important;
+  break-after: auto !important;
+}
+
+/* PDF Mode Specific Styling */
+.pdfMode {
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 auto !important;
+  padding: 0mm 3mm 0mm 3mm !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+}
+
+.pdfMode::before {
+  display: none !important;
+  content: none !important;
+}
+
+.pdfMode.termsStartNewPage .notesSection {
+  break-before: page !important;
+  page-break-before: always !important;
+}
+
+.pdfMode .notesSection {
+  margin-top: 8px !important;
+  padding-bottom: 5px !important;
+}
+
+.pdfMode .invoiceFooter {
+  margin-top: 15px !important;
+  padding-bottom: 5px !important;
+}
+
+.pdfMode .noPrint,
+.pdfMode .padHeader,
+.pdfMode .bottomServicesContainer,
+.pdfMode .btnAction,
+.pdfMode .addRowContainer,
+.pdfMode .btnDelete,
+.pdfMode .inlineDelete,
+.pdfMode .suggestionsDropdown,
+.pdfMode .companyHeader,
+.pdfMode .bottomContact {
+  display: none !important;
+}
+
+.pdfMode * {
+  box-sizing: border-box !important;
+}
+
+/* ইনপুট টেক্সটের নিচের অংশ জাতে না কাটে তার জন্য প্যাডিং এবং লাইন-হাইট সমন্বয় */
+.pdfMode input,
+.pdfMode textarea {
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 1px 2px 3px 2px !important;
+  margin: 0 !important;
+  line-height: 1.4 !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+}

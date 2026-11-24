@@ -1,0 +1,42 @@
+{
+  "name": "osan-lift-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "test": "node --test",
+    "check": "node --check src/app.js && node --check src/server.js",
+    "db:generate": "prisma generate",
+    "db:validate": "prisma validate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "admin:bootstrap": "node scripts/bootstrapAdmin.js"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.10.1",
+    "@prisma/client": "^7.10.1",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.1.0",
+    "google-auth-library": "^10.3.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2",
+    "nodemailer": "^10.6.0",
+    "pg": "^8.16.3",
+    "pino": "^9.9.4",
+    "pino-http": "^10.5.0",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "prisma": "^7.10.1"
+  }
+}
